@@ -62,6 +62,20 @@ func (ch *CloudwatchHook) GetHook() (func(zapcore.Entry) error, error) {
 	}
 
 	ch.svc = cloudwatchlogs.New(session.New(ch.AWSConfig))
+
+	lgresp, err := ch.svc.DescribeLogGroups(&cloudwatchlogs.DescribeLogGroupsInput{LogGroupNamePrefix: aws.String(ch.GroupName), Limit: aws.Int64(1)})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(lgresp.LogGroups) < 1 {
+		// we need to create this log group
+		_, err := ch.svc.CreateLogGroup(&cloudwatchlogs.CreateLogGroupInput{LogGroupName: aws.String(ch.GroupName)})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	resp, err := ch.svc.DescribeLogStreams(&cloudwatchlogs.DescribeLogStreamsInput{
 		LogGroupName:        aws.String(ch.GroupName), // Required
 		LogStreamNamePrefix: aws.String(ch.StreamName),
