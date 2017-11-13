@@ -1,6 +1,7 @@
 package zapcloudwatch
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -36,14 +37,15 @@ func NewCloudwatchHook(groupName, streamName string, isAsync bool, cfg *aws.Conf
 }
 
 // GetHook function returns hook to zap
-func (ch *CloudwatchHook) GetHook() (func(zapcore.Entry) error, error) {
+func (ch *CloudwatchHook) GetHook() (func(zapcore.Entry, []zapcore.Field) error, error) {
 
-	var cloudwatchWriter = func(e zapcore.Entry) error {
+	var cloudwatchWriter = func(e zapcore.Entry, k []zapcore.Field) error {
 		if !ch.isAcceptedLevel(e.Level) {
 			return nil
 		}
+
 		event := &cloudwatchlogs.InputLogEvent{
-			Message:   aws.String(e.Message),
+			Message:   aws.String(fmt.Sprintf("[%s] %s", e.LoggerName, e.Message)),
 			Timestamp: aws.Int64(int64(time.Nanosecond) * time.Now().UnixNano() / int64(time.Millisecond)),
 		}
 		params := &cloudwatchlogs.PutLogEventsInput{
