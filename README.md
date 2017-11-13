@@ -1,4 +1,4 @@
-# Cloudwatch hooks for zap
+# Cloudwatch hook for zap
 
 ## Example
 
@@ -42,7 +42,7 @@ $ go get -u github.com/bahadirbb/zapcloudwatch
 ```
 
 This is a mixin project from these 2 repositories. 
-Warning as a zaphook this hook doesn't log fields. If you need to complete logging with fields don't use this hook. You need to implement zap.Core
+Warning as a zaphook this hook doesn't log fields. If you need complete logging with fields don't use this hook. You need to implement zap.Core
 
 
 https://github.com/bluele/zapslack
