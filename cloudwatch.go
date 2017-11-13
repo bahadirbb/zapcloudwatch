@@ -37,9 +37,9 @@ func NewCloudwatchHook(groupName, streamName string, isAsync bool, cfg *aws.Conf
 }
 
 // GetHook function returns hook to zap
-func (ch *CloudwatchHook) GetHook() (func(zapcore.Entry, []zapcore.Field) error, error) {
+func (ch *CloudwatchHook) GetHook() (func(zapcore.Entry) error, error) {
 
-	var cloudwatchWriter = func(e zapcore.Entry, k []zapcore.Field) error {
+	var cloudwatchWriter = func(e zapcore.Entry) error {
 		if !ch.isAcceptedLevel(e.Level) {
 			return nil
 		}
